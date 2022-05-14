@@ -16,4 +16,9 @@ export class AuthController {
 		// const user = await this.authService.validateUser(email, password);
 		return this.authService.login(email, password);
 	}
+
+	@Post('refresh')
+	refreshTokens(@Body('refreshToken') refreshToken: string) {
+		return this.authService.refreshTokens(refreshToken);
+	}
 }

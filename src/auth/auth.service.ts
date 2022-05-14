@@ -26,12 +26,10 @@ export class AuthService {
 		const salt = await genSalt(10);
 		const newUser = new this.userModel({ email, passwordHash: await hash(password, salt) });
 
+		const user = await newUser.save();
 		const tokens = await this.getTokens(newUser.email);
-		// return newUser.save();
-		return {
-			user: newUser,
-			...tokens,
-		};
+
+		return { user, ...tokens };
 	}
 
 	async login(email: string, password) {
@@ -67,5 +65,17 @@ export class AuthService {
 		const refreshToken = await this.jwtService.signAsync(payload, { expiresIn: '7d' });
 
 		return { accessToken, refreshToken };
+	}
+
+	async refreshTokens(refreshToken: string) {
+		if (!refreshToken) throw new UnauthorizedException('Please sign in!');
+
+		const result = await this.jwtService.verifyAsync(refreshToken);
+		if (!result) throw new UnauthorizedException('Invalid token or expired');
+
+		const user = await this.findUser(result.email);
+		const tokens = await this.getTokens(user.email);
+
+		return { user, ...tokens };
 	}
 }
