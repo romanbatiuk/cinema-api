@@ -6,7 +6,7 @@ export class UserModel extends TimeStamps {
 	@prop({ unique: true })
 	email: string;
 
-	@prop()
+	@prop({ select: false })
 	passwordHash: string;
 
 	@prop({ default: false })

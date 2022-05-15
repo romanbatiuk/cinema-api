@@ -29,7 +29,7 @@ export class AuthService {
 		const user = await newUser.save();
 		const tokens = await this.getTokens(newUser.email);
 
-		return { user, ...tokens };
+		return { ...tokens };
 	}
 
 	async login(email: string, password) {
@@ -37,13 +37,12 @@ export class AuthService {
 		const tokens = await this.getTokens(user.email);
 
 		return {
-			user,
 			...tokens,
 		};
 	}
 
 	async findUser(email: string) {
-		return this.userModel.findOne({ email }).exec();
+		return this.userModel.findOne({ email }).select('+passwordHash').exec();
 	}
 
 	async validateUser(email: string, password: string): Promise<Pick<UserModel, 'email'>> {
@@ -60,7 +59,6 @@ export class AuthService {
 
 	async getTokens(email: string): Promise<Tokens> {
 		const payload = { email };
-
 		const accessToken = await this.jwtService.signAsync(payload, { expiresIn: '15m' });
 		const refreshToken = await this.jwtService.signAsync(payload, { expiresIn: '7d' });
 
@@ -76,6 +74,6 @@ export class AuthService {
 		const user = await this.findUser(result.email);
 		const tokens = await this.getTokens(user.email);
 
-		return { user, ...tokens };
+		return { ...tokens };
 	}
 }

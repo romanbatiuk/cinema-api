@@ -6,8 +6,8 @@ import { UserModel } from './user.model';
 @Injectable()
 export class UserService {
 	constructor(@InjectModel(UserModel) private readonly userModel: ModelType<UserModel>) {}
-	async getUserById(_id: string) {
-		const user = await this.userModel.findById(_id);
-		return user;
+
+	async getUserById(_id: string): Promise<UserModel> {
+		return await this.userModel.findById(_id);
 	}
 }
