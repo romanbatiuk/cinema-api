@@ -37,4 +37,26 @@ export class UserService {
 		await user.save();
 		return;
 	}
+
+	async getAllUsers(search?: string) {
+		let options = {};
+
+		if (search) {
+			options = {
+				$or: [{ email: new RegExp(search, 'i') }],
+			};
+		}
+
+		return this.userModel
+			.find(options)
+			.select('-updatedAt -__v')
+			.sort({
+				createdAt: 'desc',
+			})
+			.exec();
+	}
+
+	async deleteUser(id: string) {
+		return this.userModel.findByIdAndDelete(id).exec();
+	}
 }
