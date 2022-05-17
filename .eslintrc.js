@@ -21,5 +21,6 @@ module.exports = {
 		'@typescript-eslint/no-empty-interface': 'off',
 		'@typescript-eslint/no-empty-function': 'off',
 		'no-console': 'warn',
+		'@typescript-eslint/no-inferrable-types': 'off',
 	},
 };
