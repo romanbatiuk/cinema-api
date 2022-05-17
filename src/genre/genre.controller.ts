@@ -43,7 +43,7 @@ export class GenreController {
 
 	@Delete(':id')
 	@Auth('admin')
-	async deleteUser(@Param('id', IdValidationPipe) id: string) {
+	async deleteGenre(@Param('id', IdValidationPipe) id: string) {
 		return this.genreService.deleteGenre(id);
 	}
 }
