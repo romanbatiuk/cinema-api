@@ -32,7 +32,7 @@ export class MovieService {
 
 	async getMovieBySlug(slug: string) {
 		const movie = await this.movieModel.findOne({ slug }).populate('actors genres').exec();
-		if (!movie) throw new NotFoundException('movie not found');
+		if (!movie) throw new NotFoundException('Movie not found');
 		return movie;
 	}
 
