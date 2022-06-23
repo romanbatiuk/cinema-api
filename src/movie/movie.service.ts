@@ -9,7 +9,7 @@ import { MovieModel } from './movie.model';
 export class MovieService {
 	constructor(@InjectModel(MovieModel) private readonly movieModel: ModelType<MovieModel>) {}
 
-	async getAllActors(search?: string) {
+	async getAllMovies(search?: string) {
 		let options = {};
 
 		if (search) {
@@ -36,7 +36,7 @@ export class MovieService {
 		return movie;
 	}
 
-	async getMoviesByActor(actorId: string) {
+	async getMoviesByActor(actorId: Types.ObjectId) {
 		const movies = await this.movieModel.find({ actors: actorId }).exec();
 		if (!movies) throw new NotFoundException('Movies not found');
 		return movies;
@@ -48,9 +48,17 @@ export class MovieService {
 		return movies;
 	}
 
+	async getPopularMovies() {
+		return await this.movieModel
+			.find({ countOpened: { $gt: 0 } })
+			.sort({ countOpened: -1 })
+			.populate('genres')
+			.exec();
+	}
+
 	async updateCountOpened(slug: string) {
 		const updatedCount = await this.movieModel
-			.findOneAndUpdate({ slug }, { $inc: { countOpened: 1 } })
+			.findOneAndUpdate({ slug }, { $inc: { countOpened: 1 } }, { new: true })
 			.exec();
 
 		if (!updatedCount) throw new NotFoundException('Movie not found');
@@ -58,7 +66,7 @@ export class MovieService {
 	}
 
 	// ! METHODS FOR ADMIN
-	async getActorById(id: string) {
+	async getMovieById(id: Types.ObjectId) {
 		const movie = await this.movieModel.findById(id);
 		if (!movie) throw new NotFoundException('Movie not found');
 		return movie;
